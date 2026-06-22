@@ -12,6 +12,8 @@
 \usepackage[siunitx]{circuitikz}
 \usepackage{hyperref}
 \usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
@@ -84,7 +86,7 @@
 \vfill
 \begin{abstract}
 \noindent
-This report presents the design, theoretical analysis, and computational simulation of a single-bit memory cell based purely on electromagnetic principles. Unlike conventional transistor-based DRAM, this cell stores binary information as an electrostatic energy state within a parallel-plate capacitor. The project explores the physical foundations of charge storage, dielectric relaxation, and the finite conductivity of real materials that leads to data degradation over time. We derive the governing equations from Maxwell's electrostatics, implement a numerical solver using the Finite Difference Method (FDM) for potential distribution, and develop a Python-based transient simulator to model the complete memory cycle: Write, Hold, Read, and Refresh. The analysis demonstrates how the material relaxation time constant $\tau_r = \epsilon/\sigma$ serves as the fundamental engineering constraint determining the refresh rate and reliability of the stored bit.
+This report presents a complete, buildable university demonstration of a one-bit capacitor memory cell. The bit is stored as electrostatic energy in a capacitor: a charged capacitor represents logic ``1'' and a discharged capacitor represents logic ``0''. The report combines Maxwell/electrostatics theory, an exact breadboard schematic, a bill of materials, construction and test procedures, and simulation code. The practical circuit uses analog switches to perform write, read, erase, and refresh operations, plus a high-impedance op-amp buffer so that the stored voltage can be observed without immediately destroying the bit. The analysis connects the breadboard measurements to capacitance, electric field, stored energy, leakage, and dielectric relaxation.
 \end{abstract}
 
 \vfill
@@ -113,6 +115,8 @@ The objectives of this project are:
 \begin{enumerate}
     \item \textbf{Theoretical Foundation:} Derive the governing electromagnetic equations for charge storage, energy localization, and dielectric relaxation from first principles.
     \item \textbf{Circuit Modeling:} Develop an equivalent circuit model representing the physical memory cell, including non-ideal effects such as dielectric leakage.
+    \item \textbf{Breadboard Implementation:} Specify a safe, low-voltage demonstration circuit that can be assembled from through-hole parts on a solderless breadboard.
+    \item \textbf{Exact Schematic and BOM:} Provide wiring-level circuit details and a component list for the complete experiment.
     \item \textbf{Numerical Simulation:} Implement a Finite Difference Method (FDM) solver to visualize the electrostatic potential distribution within the cell.
     \item \textbf{Transient Analysis:} Develop a computational model for the complete memory cycle (Write, Hold, Read, Refresh) using Python.
     \item \textbf{Material Analysis:} Evaluate candidate dielectric materials and determine their suitability for memory applications based on the relaxation time constant.
@@ -120,7 +124,7 @@ The objectives of this project are:
 
 \section{Report Structure}
 
-This report is organized as follows. Chapter \ref{ch:theory} establishes the electromagnetic theoretical foundation. Chapter \ref{ch:materials} examines the material properties that govern cell behavior. Chapter \ref{ch:cycle} defines the memory cycle logic. Chapter \ref{ch:simulation} presents the numerical simulation strategy and implementation. Chapter \ref{ch:results} analyzes the results, and Chapter \ref{ch:conclusion} provides conclusions and future directions.
+This report is organized as follows. Chapter \ref{ch:theory} establishes the electromagnetic theoretical foundation. Chapter \ref{ch:materials} examines the material properties that govern cell behavior. Chapter \ref{ch:build} gives the exact breadboard design, schematic, BOM, and test procedure. Chapter \ref{ch:cycle} defines the memory cycle logic. Chapter \ref{ch:simulation} presents the numerical simulation strategy and implementation. Chapter \ref{ch:results} analyzes the results, and Chapter \ref{ch:conclusion} provides conclusions and future directions.
 
 % ============================================================
 \chapter{Electromagnetic Theoretical Foundation}
@@ -351,6 +355,104 @@ For a realistic cell with $S = 1\,\mu\text{m}^2 = 10^{-12}$ m$^2$, $d = 10$ nm $
 \end{align}
 
 A single bit is encoded by the presence or absence of approximately \textbf{26,000 electrons} --- a striking illustration of the physical reality underlying digital abstraction.
+
+
+
+% ============================================================
+\chapter{Buildable Breadboard Design}
+\label{ch:build}
+% ============================================================
+
+\section{What Exactly to Build}
+
+Build the demonstration as a low-voltage, one-bit dynamic memory cell. The storage node is a single capacitor $C_{cell}$. A push button writes logic ``1'' by connecting the capacitor to $+5\,\mathrm{V}$ through a CMOS analog switch. A second push button erases logic ``0'' by connecting the capacitor to ground through another analog switch. A third push button performs a deliberately destructive read by sharing charge with a second capacitor $C_{sense}$. A fourth push button refreshes the cell by rewriting $+5\,\mathrm{V}$. An LM358 voltage follower monitors the storage node with high input impedance, and an LED indicator lights when the stored voltage is above a threshold.
+
+\begin{enumerate}[leftmargin=*]
+    \item Assemble the circuit in Figure~\ref{fig:breadboard_schematic} on a solderless breadboard using a regulated $5\,\mathrm{V}$ supply.
+    \item Use $C_{cell}=1\,\mu\mathrm{F}$ film capacitor if available. If only electrolytic capacitors are available, use a low-leakage aluminum electrolytic and observe polarity.
+    \item Press \textbf{WRITE 1}: the storage-node voltage $V_X$ should rise toward $5\,\mathrm{V}$.
+    \item Release all buttons for \textbf{HOLD}: $V_X$ should decay slowly due to leakage through the capacitor dielectric, switch off-resistance, op-amp input bias, and any intentional leakage resistor.
+    \item Press \textbf{READ}: $C_{cell}$ shares charge with $C_{sense}$, so $V_X$ drops to approximately $V_X C_{cell}/(C_{cell}+C_{sense})$. With equal capacitors, the read operation cuts the voltage approximately in half.
+    \item Press \textbf{REFRESH}: $V_X$ returns to $5\,\mathrm{V}$.
+    \item Press \textbf{ERASE 0}: $V_X$ returns to $0\,\mathrm{V}$.
+\end{enumerate}
+
+\section{Design Values}
+
+\begin{table}[H]
+    \centering
+    \caption{Chosen demonstration design values}
+    \label{tab:design_values}
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        \textbf{Quantity} & \textbf{Value} & \textbf{Purpose} \\
+        \midrule
+        Supply voltage $V_{DD}$ & $5\,\mathrm{V}$ & Safe breadboard logic and op-amp supply \\
+        Storage capacitor $C_{cell}$ & $1\,\mu\mathrm{F}$ & Stores the bit visibly for seconds to minutes \\
+        Sense capacitor $C_{sense}$ & $1\,\mu\mathrm{F}$ & Makes destructive read easy to observe \\
+        Optional leakage resistor $R_{demo}$ & $10\,\mathrm{M}\Omega$ & Gives a visible decay time constant near $10\,\mathrm{s}$ \\
+        LED resistor & $1\,\mathrm{k}\Omega$ & Limits indicator LED current \\
+        Logic threshold & about $2.5\,\mathrm{V}$ & Mid-supply boundary between ``0'' and ``1'' \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+If $R_{demo}=10\,\mathrm{M}\Omega$ is installed in parallel with $C_{cell}=1\,\mu\mathrm{F}$, the intentional hold time constant is
+\begin{equation}
+    \tau_{demo}=R_{demo}C_{cell}=10\,\mathrm{s}.
+\end{equation}
+The midpoint threshold $2.5\,\mathrm{V}$ is reached after $t=\tau\ln(2)=6.93\,\mathrm{s}$. Remove $R_{demo}$ for a longer retention experiment dominated by real component leakage.
+
+\section{Exact Schematic}
+
+\begin{figure}[H]
+    \centering
+    \begin{circuitikz}[american, scale=0.95]
+        \draw (0,6) node[vcc]{$+5\,\mathrm{V}$} to[push button, l=WRITE 1] (2.2,6) to[R,l=$330\,\Omega$] (4.2,6) to[normal open switch,l=$U1A$] (6.2,6) -- (6.2,3.2);
+        \draw (0,0) node[ground]{} to[push button, l=ERASE 0] (2.2,0) to[R,l=$330\,\Omega$] (4.2,0) to[normal open switch,l=$U1B$] (6.2,0) -- (6.2,3.2);
+        \draw (6.2,3.2) node[circ,label=above:$V_X$]{} to[C,l=$C_{cell}\;1\,\mu\mathrm{F}$] (6.2,0) node[ground]{};
+        \draw (7.4,3.2) to[R,l=$R_{demo}\;10\,\mathrm{M}\Omega$, *-*] (7.4,0) node[ground]{};
+        \draw (6.2,3.2) -- (9.0,3.2) to[normal open switch,l=$U1C$] (11.0,3.2) to[C,l=$C_{sense}\;1\,\mu\mathrm{F}$] (11.0,0) node[ground]{};
+        \draw (9.0,3.2) -- (9.0,4.7) node[op amp, noinv input up, anchor=+](opamp){};
+        \draw (opamp.-) -- ++(0,-1.0) -| (opamp.out);
+        \draw (opamp.out) -- ++(1.0,0) node[circ,label=right:$V_{OUT}$]{};
+        \draw (opamp.out) to[R,l=$1\,\mathrm{k}\Omega$] ++(0,-2) to[led,l=DATA LED] ++(0,-1) node[ground]{};
+        \draw (12.3,6) node[vcc]{$+5\,\mathrm{V}$} to[push button,l=REFRESH] (14.3,6) to[normal open switch,l=$U1D$] (14.3,3.2) -- (6.2,3.2);
+    \end{circuitikz}
+    \caption{Exact breadboard schematic. U1 is one CD4066 or 74HC4066 quad bilateral analog switch. The LM358 is wired as a voltage follower so measurements do not heavily load the capacitor.}
+    \label{fig:breadboard_schematic}
+\end{figure}
+
+\section{Bill of Materials}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}p{0.32\textwidth}p{0.12\textwidth}p{0.34\textwidth}@{}}
+\caption{Breadboard bill of materials}\label{tab:bom}\\
+\toprule
+\textbf{Ref.} & \textbf{Part} & \textbf{Qty.} & \textbf{Notes} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Ref.} & \textbf{Part} & \textbf{Qty.} & \textbf{Notes} \\
+\midrule
+\endhead
+U1 & CD4066B or 74HC4066 quad bilateral switch, DIP package & 1 & Implements write, erase, read, and refresh switches. \\
+U2 & LM358 dual op-amp, DIP package & 1 & Use one op-amp as a voltage follower buffer. \\
+$C_{cell}$ & $1\,\mu\mathrm{F}$ film capacitor, $\ge 16\,\mathrm{V}$ & 1 & Preferred storage capacitor; electrolytic is acceptable with polarity observed. \\
+$C_{sense}$ & $1\,\mu\mathrm{F}$ capacitor, $\ge 16\,\mathrm{V}$ & 1 & Equal to $C_{cell}$ for an obvious half-voltage destructive read. \\
+$R_{demo}$ & $10\,\mathrm{M}\Omega$, $1/4\,\mathrm{W}$ resistor & 1 & Optional visible leakage path; remove for long-retention test. \\
+$R_{LED}$ & $1\,\mathrm{k}\Omega$, $1/4\,\mathrm{W}$ resistor & 1 & LED current limiting. \\
+$R_{ctrl}$ & $100\,\mathrm{k}\Omega$, $1/4\,\mathrm{W}$ resistors & 4 & Pull each 4066 control input down to ground. \\
+$R_s$ & $330\,\Omega$, $1/4\,\mathrm{W}$ resistors & 2 & Limits surge current during write and erase. \\
+LED & 5 mm red or green LED & 1 & Visual data indicator. \\
+SW1--SW4 & Momentary normally-open push buttons & 4 & WRITE, ERASE, READ, and REFRESH controls. \\
+Supply & Regulated $5\,\mathrm{V}$ breadboard supply or USB supply module & 1 & Do not exceed IC voltage ratings. \\
+Misc. & Solderless breadboard and jumper wires & 1 set & Use short jumpers around the storage node to reduce leakage/noise. \\
+\bottomrule
+\end{longtable}
+
+\section{Measurement Checklist}
+
+Record $V_X$ or $V_{OUT}$ with a digital multimeter after each operation. A good results table contains: operation name, button pressed, expected voltage, measured voltage, and explanation. For example, after a write the expected value is near $5\,\mathrm{V}$; after a read with equal $1\,\mu\mathrm{F}$ capacitors, the expected value is near $2.5\,\mathrm{V}$ before leakage is considered.
 
 % ============================================================
 \chapter{The Memory Cycle Logic}
