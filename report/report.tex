@@ -1,0 +1,415 @@
+% ============================================================
+%  The Neuron as an Electric Cable
+%  Electromagnetics — Semester 4 Project
+% ============================================================
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.8cm, right=2.8cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{enumitem}
+
+\graphicspath{{figures/}}
+
+% ----------------------------------------------------------
+%  Colours
+% ----------------------------------------------------------
+\definecolor{myblue}{RGB}{37, 99, 235}
+\definecolor{mydarkblue}{RGB}{30, 64, 175}
+\definecolor{myorange}{RGB}{234, 88, 12}
+\definecolor{mylight}{RGB}{239, 246, 255}
+\definecolor{mygray}{RGB}{107, 114, 128}
+\definecolor{myborder}{RGB}{147, 197, 253}
+\definecolor{titlebg}{RGB}{15, 23, 42}
+
+% ----------------------------------------------------------
+%  tcolorbox
+% ----------------------------------------------------------
+\tcbuselibrary{skins, breakable}
+
+\newtcolorbox{formulabox}[1][]{
+  enhanced, colback=mylight, colframe=myblue,
+  boxrule=1pt, arc=5pt, left=8pt, right=8pt, top=6pt, bottom=6pt,
+  fontupper=\small, #1
+}
+
+% ----------------------------------------------------------
+%  Section formatting
+% ----------------------------------------------------------
+\titleformat{\section}
+  {\Large\bfseries\color{myblue}}{\thesection}{0.8em}{}
+  [\vspace{2pt}{\color{myborder}\hrule height 1.5pt}]
+\titleformat{\subsection}
+  {\large\bfseries\color{mydarkblue}}{\thesubsection}{0.6em}{}
+
+\titlespacing{\section}{0pt}{18pt}{8pt}
+\titlespacing{\subsection}{0pt}{12pt}{4pt}
+
+% ----------------------------------------------------------
+%  Header / footer
+% ----------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{mygray}\textit{The Neuron as an Electric Cable}}
+\fancyhead[R]{\small\color{mygray}\textit{Electromagnetics --- Semester 4}}
+\fancyfoot[C]{\color{mygray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{%
+  \hbox to\headwidth{\color{myborder}\leaders\hrule height \headrulewidth\hfill}}
+
+\captionsetup{font=small, labelfont={bf,color=myblue}, labelsep=period}
+
+% ============================================================
+\begin{document}
+% ============================================================
+
+% ----------------------------------------------------------
+%  TITLE PAGE
+% ----------------------------------------------------------
+\thispagestyle{empty}
+
+% ── Top university bar ────────────────────────────────────
+\noindent
+\begin{tcolorbox}[
+  enhanced, colback=myblue, colframe=myblue,
+  arc=0pt, boxrule=0pt,
+  left=16pt, right=16pt, top=10pt, bottom=10pt,
+  width=\linewidth,
+]
+  \centering
+  {\small\bfseries\color{white} Shahid Bahonar University of Kerman}
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+% ── Course label ──────────────────────────────────────────
+\begin{center}
+  {\color{mygray}\small\MakeUppercase{Electromagnetics
+    \;\textbullet\; Semester 4
+    \;\textbullet\; Project Report}}
+\end{center}
+
+% ── Decorative rule ───────────────────────────────────────
+\vspace{0.3cm}
+{\color{myborder}\hrule height 1.5pt}
+\vspace{0.3cm}
+{\color{myblue}\hrule height 0.4pt}
+\vspace{1.2cm}
+
+% ── Main title ────────────────────────────────────────────
+\begin{center}
+  {\fontsize{26}{32}\bfseries\color{titlebg}
+    The Neuron as an Electric Cable}\\[10pt]
+  {\large\color{mygray} An Electromagnetic Simulation Project}
+\end{center}
+
+\vspace{1.4cm}
+
+% ── Key equation ──────────────────────────────────────────
+\begin{formulabox}
+  \centering
+  \vspace{4pt}
+  \[
+    C_m\,\frac{dV}{dt}
+      = I_{\text{ext}}
+        - \bar{g}_{Na}\,m^3 h\,(V - E_{Na})
+        - \bar{g}_K\,n^4\,(V - E_K)
+        - g_L\,(V - E_L)
+  \]
+  \vspace{2pt}
+  {\color{mygray}\small
+    The neuron membrane modelled as an active electrical circuit.}
+  \vspace{4pt}
+\end{formulabox}
+
+\vspace{1.6cm}
+
+% ── Decorative rule ───────────────────────────────────────
+{\color{myblue}\hrule height 0.4pt}
+\vspace{0.3cm}
+{\color{myborder}\hrule height 1.5pt}
+
+\vspace{1.4cm}
+
+% ── Author block ──────────────────────────────────────────
+\begin{center}
+  {\large\textbf{Ashkan Namjoo}}\\[8pt]
+  {\color{mygray}\small Shahid Bahonar University of Kerman}\\[4pt]
+  {\color{mygray}\small \today}
+\end{center}
+
+\newpage
+
+% ----------------------------------------------------------
+%  ABSTRACT
+% ----------------------------------------------------------
+\begin{tcolorbox}[
+  enhanced, colback=mylight, colframe=myborder,
+  boxrule=0.8pt, arc=5pt, left=10pt, right=10pt, top=8pt, bottom=8pt,
+]
+  \textbf{\color{myblue}Abstract.}\quad
+  The goal of this project was to show that a neuron can be modelled
+  using basic electromagnetics. The cell membrane behaves like a
+  capacitor, the axon behaves like a cable with resistance and
+  capacitance, and the electrical signal neurons use to communicate
+  can be simulated with a set of differential equations. All
+  simulations are done in Python and the results are shown below.
+\end{tcolorbox}
+
+\vspace{0.6cm}
+
+% ----------------------------------------------------------
+%  1. INTRODUCTION
+% ----------------------------------------------------------
+\section{Introduction}
+
+The nervous system runs on electricity. Neurons communicate by
+sending voltage pulses --- called \emph{action potentials} --- along
+their axons. The interesting thing is that the physics behind this is
+not special biology; it is the same electromagnetics we study in
+circuits and field theory.
+
+The cell membrane is a thin insulating layer between two conductive
+fluids, so it acts as a capacitor. The axon is a long tube of
+conductive fluid with a leaky membrane wall, so it acts like a lossy
+cable. And the voltage obeys a differential equation that comes
+directly from applying KCL to a small segment of the cable.
+
+This project simulates three things:
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+  \item The electric field and capacitance of the cell membrane
+  \item An action potential at a single point using the
+        Hodgkin--Huxley model
+  \item The action potential propagating along the axon
+\end{enumerate}
+
+% ----------------------------------------------------------
+%  2. THE MEMBRANE AS A CAPACITOR
+% ----------------------------------------------------------
+\section{The Membrane as a Capacitor}
+
+The cell membrane is about 5~nm thick and made of lipids, which are
+insulators. The inside and outside of the cell are both filled with
+conductive ionic fluid. This gives the structure:
+
+\[
+  \underbrace{\text{Conductive fluid}}_{\text{outside}}
+  \;-\;
+  \underbrace{\text{Lipid membrane}}_{\text{insulator, } d \approx 5\,\text{nm}}
+  \;-\;
+  \underbrace{\text{Conductive fluid}}_{\text{inside}}
+\]
+
+which is exactly a parallel-plate capacitor. The standard formulas
+apply:
+
+\begin{formulabox}
+\[
+  E \approx \frac{V_m}{d}
+  \qquad\qquad
+  C_m = \frac{\varepsilon}{d}
+  \qquad\qquad
+  w_e = \frac{1}{2}\,\varepsilon\,E^2
+\]
+\end{formulabox}
+
+At resting potential ($V_m \approx -70$~mV, $d = 5$~nm):
+\[
+  E = \frac{70 \times 10^{-3}}{5 \times 10^{-9}}
+    = 1.4 \times 10^7 \;\text{V/m}
+\]
+
+That is 14 million volts per metre --- a very strong field produced
+by a very small voltage, only because the membrane is so thin.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\linewidth]{fig1_membrane.pdf}
+  \caption{Left: electric field inside the membrane as a function of
+    membrane voltage. Right: electrostatic energy density stored in
+    the membrane. Both increase with voltage according to the
+    parallel-plate capacitor model.}
+  \label{fig:membrane}
+\end{figure}
+
+The specific capacitance (per unit area) is $C_m = \varepsilon / d$.
+For the lipid membrane with $\varepsilon_r \approx 2.1$ and $d = 5$~nm
+this gives roughly $0.37\;\mu$F/m$^2$, which matches measured values
+for real cell membranes.
+
+% ----------------------------------------------------------
+%  3. ACTION POTENTIAL
+% ----------------------------------------------------------
+\section{The Action Potential}
+
+\subsection{Why a Passive Cable Is Not Enough}
+
+A simple RC cable loses voltage as the signal travels. To carry a
+signal over long distances without it decaying, neurons use
+\emph{voltage-gated ion channels} --- protein pores in the membrane
+that open or close depending on the local voltage.
+
+When the voltage rises above a threshold, sodium (Na$^+$) channels
+open and ions rush in, raising the voltage further. This positive
+feedback produces a sharp spike. Potassium (K$^+$) channels then
+open more slowly and pull the voltage back down. The result is an
+\emph{action potential}: a self-regenerating pulse that travels along
+the axon without decaying.
+
+\subsection{The Hodgkin--Huxley Model}
+
+Hodgkin and Huxley \cite{Hodgkin1952} modelled this with KCL at the
+membrane. The four currents are an external stimulus and three ionic
+currents:
+
+\begin{formulabox}
+\[
+  C_m\,\frac{dV}{dt}
+    = I_{\text{ext}}
+      - \underbrace{\bar{g}_{Na}\,m^3 h\,(V - E_{Na})}_{I_{Na}}
+      - \underbrace{\bar{g}_K\,n^4\,(V - E_K)}_{I_K}
+      - \underbrace{g_L\,(V - E_L)}_{I_L}
+\]
+\end{formulabox}
+
+$m$, $h$, $n$ are gating variables (0 to 1) saying how open each
+channel is. Each one follows a simple first-order equation:
+\[
+  \frac{dm}{dt} = \alpha_m(V)\,(1-m) - \beta_m(V)\,m
+\]
+The rate functions $\alpha$ and $\beta$ depend on voltage, which is
+what makes the system nonlinear and capable of generating the spike.
+
+\begin{table}[H]
+  \centering
+  \caption{Hodgkin--Huxley model parameters used in the simulation.}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Parameter} & \textbf{Symbol} & \textbf{Value}
+      & \textbf{Meaning} \\
+    \midrule
+    Membrane capacitance   & $C_m$          & $1\;\mu$F/cm$^2$
+      & Charge storage \\
+    Max Na$^+$ conductance & $\bar{g}_{Na}$ & $120\;$mS/cm$^2$
+      & Na$^+$ channel strength \\
+    Max K$^+$ conductance  & $\bar{g}_{K}$  & $36\;$mS/cm$^2$
+      & K$^+$ channel strength \\
+    Na$^+$ reversal pot.   & $E_{Na}$       & $+50\;$mV
+      & Na$^+$ equilibrium \\
+    K$^+$ reversal pot.    & $E_K$          & $-77\;$mV
+      & K$^+$ equilibrium \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:hh}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{fig2_hh.pdf}
+  \caption{Hodgkin--Huxley simulation at a single point on the membrane.
+    Top: membrane voltage --- action potentials fire repeatedly while
+    the stimulus current is applied. Bottom: the three gating variables
+    $m$, $h$, $n$ showing how the ion channels open and close during
+    each spike.}
+  \label{fig:hh}
+\end{figure}
+
+In Figure~\ref{fig:hh}, $m$ rises sharply at the start of each spike
+(Na$^+$ channels opening) and $h$ drops shortly after (Na$^+$ channels
+inactivating), while $n$ rises more slowly (K$^+$ channels pulling the
+voltage back down). The spike fires again once the channels have reset.
+
+% ----------------------------------------------------------
+%  4. PROPAGATION
+% ----------------------------------------------------------
+\section{Propagation Along the Axon}
+
+\subsection{The Cable Model}
+
+The axon is divided into compartments. Each compartment has its own
+HH membrane with capacitance and ion channels, and adjacent
+compartments are coupled through the axial resistance of the
+intracellular fluid. The axial resistance per unit length is:
+\[
+  r_i = \frac{1}{\sigma_i\,\pi a^2}
+\]
+where $a$ is the axon radius and $\sigma_i$ is the conductivity of
+the axoplasm. The voltage in each compartment obeys:
+
+\begin{formulabox}
+\[
+  C_m\,\frac{\partial V}{\partial t}
+    = \frac{a}{2R_i}\,\frac{\partial^2 V}{\partial x^2}
+      + I_{HH}(V,\,m,\,h,\,n)
+\]
+\end{formulabox}
+
+where $I_{HH}$ is the sum of all HH currents. This is the cable
+equation: the telegrapher's equation with $L' = 0$ and a nonlinear
+source term from the ion channels.
+
+\subsection{Simulation Result}
+
+A brief current pulse was injected at the left end of a 60~mm model
+axon (radius $50\;\mu$m), and the voltage was tracked across all
+compartments over time.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{fig3_propagation.pdf}
+  \caption{Action potential propagating along the axon. Left:
+    space-time heatmap --- the red band is the action potential
+    traveling from left to right at roughly constant speed. Right:
+    voltage traces at six positions show the same spike arriving
+    later at each successive point.}
+  \label{fig:propagation}
+\end{figure}
+
+Unlike a passive cable where the signal would decay, here the spike
+keeps its shape and amplitude along the full length. The ion channels
+at each compartment regenerate the signal locally, so the pulse is
+self-sustaining.
+
+Conduction speed scales roughly as $\theta \propto \sqrt{a}$: a
+thicker axon has lower $r_i$, the voltage spreads further ahead, and
+the next compartment is triggered sooner. Myelinated axons (wrapped
+in an insulating sheath) increase the effective membrane resistance,
+which increases the space constant and allows even faster propagation.
+
+% ----------------------------------------------------------
+%  5. CONCLUSION
+% ----------------------------------------------------------
+\section{Conclusion}
+
+The project shows that the electromagnetic tools we study in this
+course apply directly to a biological system. The membrane is a
+capacitor, the axon is a lossy cable, and the action potential is a
+self-regenerating wave that travels along the cable without any loss.
+
+The simulation reproduces real neuron behaviour: the action potential
+fires above threshold (Figure~\ref{fig:hh}), travels at constant
+speed (Figure~\ref{fig:propagation}), and the membrane fields match
+the capacitor model (Figure~\ref{fig:membrane}).
+
+% ----------------------------------------------------------
+%  REFERENCES
+% ----------------------------------------------------------
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}
