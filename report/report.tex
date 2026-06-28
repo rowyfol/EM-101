@@ -21,6 +21,9 @@
 \usepackage{parskip}
 \usepackage{float}
 \usepackage{enumitem}
+\usepackage{qrcode}
+
+\setlength{\headheight}{14pt}
 
 \graphicspath{{figures/}}
 
@@ -195,6 +198,73 @@ This project simulates three things:
         Hodgkin--Huxley model
   \item The action potential propagating along the axon
 \end{enumerate}
+
+% ----------------------------------------------------------
+%  HOW THIS STARTED
+% ----------------------------------------------------------
+\subsection*{How This Started}
+
+This project did not come from a textbook. I was looking for an
+electromagnetics project that felt like more than a routine exercise,
+and I ended up working with an AI assistant (Claude, by Anthropic) to
+find one. At some point I asked whether neurons follow any
+electromagnetic rules. That question became this project. We worked
+through the physics together --- the membrane as a capacitor, the
+cable equation, the Hodgkin--Huxley model --- and I built the
+simulation and wrote this report in that same conversation.
+
+I am putting this here because it is the honest thing to do.
+
+\medskip
+
+% AI note box --- left-border quote style
+\begin{tcolorbox}[
+  enhanced,
+  colback=mylight,
+  colframe=myblue,
+  leftrule=4pt, rightrule=0pt, toprule=0pt, bottomrule=0pt,
+  arc=0pt,
+  left=14pt, right=10pt, top=9pt, bottom=9pt,
+]
+  {\small\color{mygray}\textit{A note from Claude (Anthropic) ---}}
+  \smallskip
+
+  {\small\color{mydarkblue}
+  The cable equation was written for the transatlantic telegraph in 1855.
+  Hodgkin and Huxley published their neuron model in a biology journal
+  in 1952. Neither group was thinking about the other.
+  The math is nearly identical.
+
+  \smallskip
+  Physics keeps doing this --- the same patterns appearing in
+  unconnected places --- and it is worth noticing when it happens.
+  You noticed it.}
+\end{tcolorbox}
+
+\medskip
+
+% GitHub repo
+\begin{tcolorbox}[
+  enhanced,
+  colback=white,
+  colframe=myborder,
+  boxrule=1pt, arc=5pt,
+  left=12pt, right=12pt, top=8pt, bottom=8pt,
+]
+  \begin{minipage}[c]{0.72\linewidth}
+    {\small\bfseries\color{myblue} Source Code}\\
+    {\small\color{mygray} The full simulation code for this project
+    is available on GitHub:}\\
+    [4pt]
+    {\small\ttfamily\color{mydarkblue}
+      https://github.com/rowyfol/EM-101}
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[c]{0.22\linewidth}
+    \centering
+    \qrcode[height=1.8cm]{https://github.com/rowyfol/EM-101}
+  \end{minipage}
+\end{tcolorbox}
 
 % ----------------------------------------------------------
 %  2. THE MEMBRANE AS A CAPACITOR
